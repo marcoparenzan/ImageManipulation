@@ -10,16 +10,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ferrari-f12.png" />
     <None Remove="image.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="ferrari-f12.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="image.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ImageLib\ImageLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="DoubleBufferForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="ImageManipulationForm.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -1,3 +1,4 @@
+using ImageLib;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,14 +16,7 @@ namespace ImageManipulation
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            var source = (Bitmap)Bitmap.FromFile("image.png");
-            var texture = Texture.FromBitmap(source);
-
-            var backBufferBitmap = (Bitmap)new Bitmap(1024, 768);
-            var backBuffer = ScreenBuffer.FromBitmap(backBufferBitmap);
-            var angle = (Angle) 0;
-
-            var form = new DoubleBufferForm((2,2));
+            var form = new DoubleBufferForm(1024, 768);
             form.StartPosition = FormStartPosition.CenterScreen;
             //form.FormBorderStyle = FormBorderStyle.None;
             form.KeyDown += (s, e) =>
@@ -33,8 +27,11 @@ namespace ImageManipulation
                     return;
                 }
             };
-            form.ClientSize = new Size(1024, 768);
             form.Show();
+
+            // prepare resources
+
+            var sprite = new Sprite();
 
             // render
 
@@ -48,18 +45,18 @@ namespace ImageManipulation
 
                 // prepare buffer
 
-                backBuffer.Begin(Color.White);
+                var backBuffer = ScreenBuffer.FromBitmap(form.Backbuffer);
+                backBuffer.Begin(Colors.Green);
 
-                backBuffer.DrawImage(texture, angle, (512, 384));
+                backBuffer.DrawImage(sprite.Texture, sprite.Angle, (form.ClientRectangle.Width/2, form.ClientRectangle.Height / 2));
 
                 backBuffer.End();
 
-                form.CurrentGraphics.DrawImage(backBufferBitmap, 0, 0);
                 form.Invalidate();
 
                 // do something
 
-                angle.RotateBy(1);
+                sprite.RotateRight();
 
                 // complete
 

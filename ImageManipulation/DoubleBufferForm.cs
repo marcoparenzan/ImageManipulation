@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace ImageManipulation
 {
     public partial class DoubleBufferForm : Form
     {
-        public DoubleBufferForm((int x, int y) padding)
+        public DoubleBufferForm(int width, int height)
         {
             this.DoubleBuffered = true;
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.padding = padding;
+            this.ClientSize = new Size(width, height);
+            this.backBuffer = new Bitmap(this.ClientRectangle.Width, this.ClientRectangle.Height);
         }
 
         BufferedGraphics bufferedGraphics;
-        private (int x, int y) padding;
+        Bitmap backBuffer;
 
         public bool Suspended { get; set; } = true;
         public int FrameRate { get; set; }
@@ -28,6 +30,7 @@ namespace ImageManipulation
                 this.Suspended = true;
                 this.bufferedGraphics.Dispose();
                 this.bufferedGraphics = null;
+                this.backBuffer = null;
                 this.Invalidate();
             }
         }
@@ -37,17 +40,17 @@ namespace ImageManipulation
             base.OnPaint(e);
             if (this.bufferedGraphics == null)
             {
-                this.bufferedGraphics = BufferedGraphicsManager.Current.Allocate(e.Graphics,
-                    new System.Drawing.Rectangle(padding.x, padding.y, this.ClientRectangle.Width - padding.x * 2, this.ClientRectangle.Height - padding.y * 2)
-                );
+                this.bufferedGraphics = BufferedGraphicsManager.Current.Allocate(e.Graphics, this.ClientRectangle);
+                this.backBuffer = new Bitmap(this.ClientSize.Width, this.ClientSize.Height, PixelFormat.Format32bppArgb);
                 this.Suspended = false;
             }
             else
             {
+                this.bufferedGraphics.Graphics.DrawImage(backBuffer, 0, 0);
                 this.bufferedGraphics.Render(e.Graphics);
             }
         }
 
-        public Graphics CurrentGraphics => this.bufferedGraphics.Graphics;
+        public Bitmap Backbuffer => backBuffer;
     }
 }

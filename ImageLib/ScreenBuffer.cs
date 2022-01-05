@@ -1,11 +1,11 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 
-namespace ImageManipulation
+namespace ImageLib
 {
     public partial class ScreenBuffer
     {
         Bitmap target;
-        int w, h;
 
         BitmapData data;
         unsafe byte* scan0;
@@ -14,23 +14,21 @@ namespace ImageManipulation
         {
             return new ScreenBuffer
             {
-                target = target,
-                w = target.Width,
-                h = target.Height
+                target = target
             };
         }
 
-        unsafe public ScreenBuffer Begin(Color background)
+        unsafe public ScreenBuffer Begin(byte[] backgroundColor)
         {
             this.data = target.LockBits(new System.Drawing.Rectangle(0,0, target.Width, target.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
             byte* scan0 = (byte*)data.Scan0.ToPointer();
             int bytes = Math.Abs(data.Stride) * target.Height;
             for (var i = 0; i < bytes; i += 4)
             {
-                scan0[0] = background.B; scan0++;
-                scan0[0] = background.G; scan0++;
-                scan0[0] = background.R; scan0++;
-                scan0[0] = background.A; scan0++;
+                scan0[0] = backgroundColor[0]; scan0++;
+                scan0[0] = backgroundColor[1]; scan0++;
+                scan0[0] = backgroundColor[2]; scan0++;
+                scan0[0] = backgroundColor[3]; scan0++;
             }
             this.scan0 = (byte*)data.Scan0.ToPointer();
 
@@ -40,7 +38,7 @@ namespace ImageManipulation
         public unsafe void SetPixel(double x, double y, Span<byte> color, int offset1)
         {
             // 2022.01.05: look at alpha channel!
-            var offset = ((int)y) * w * 4 + ((int)x) * 4;
+            var offset = ((int)y) * target.Width * 4 + ((int)x) * 4;
             scan0[offset++] = color[0];
             scan0[offset++] = color[1];
             scan0[offset++] = color[2];

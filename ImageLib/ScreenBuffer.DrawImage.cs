@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImageManipulation
+namespace ImageLib
 {
     public partial class ScreenBuffer
     {
@@ -68,7 +68,7 @@ namespace ImageManipulation
                     dxr = -tri.ctg;
                 }
                 var x = xl;
-                var offset = ((int)(y + cy)) * this.w * 4 + ((int)(x + cx)) * 4;
+                var offset = ((int)(y + cy)) * this.target.Width * 4 + ((int)(x + cx)) * 4;
                 while (x < xr)
                 {
                     SetPixel(offset, triangle.Scan());
