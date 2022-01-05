@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing.Imaging;
 
 namespace ImageManipulation
 {
@@ -43,13 +37,23 @@ namespace ImageManipulation
             return this;
         }
 
-        public unsafe void SetPixel(double x, double y, Color color)
+        public unsafe void SetPixel(double x, double y, Span<byte> color, int offset1)
         {
+            // 2022.01.05: look at alpha channel!
             var offset = ((int)y) * w * 4 + ((int)x) * 4;
-            scan0[offset++] = color.B;
-            scan0[offset++] = color.G;
-            scan0[offset++] = color.R;
-            scan0[offset++] = color.A;
+            scan0[offset++] = color[0];
+            scan0[offset++] = color[1];
+            scan0[offset++] = color[2];
+            scan0[offset++] = color[3];
+        }
+
+        public unsafe void SetPixel(int offset, Span<byte> color)
+        {
+            // 2022.01.05: look at alpha channel!
+            scan0[offset++] = color[0];
+            scan0[offset++] = color[1];
+            scan0[offset++] = color[2];
+            scan0[offset++] = color[3];
         }
 
         public ScreenBuffer End()

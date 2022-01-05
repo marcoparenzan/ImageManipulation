@@ -18,28 +18,28 @@ namespace ImageManipulation
             internal (double x, double y) dp;
             internal (double x, double y) dq;
 
-            internal Color faultColor;
+            static internal byte[] faultColor = new byte[] { Color.Green.B, Color.Green.G, Color.Green.R, Color.Green.A };
 
-            internal void Next()
+            internal void NextScanLine()
             {
                 p = (p.x + dp.x, p.y + dp.y);
                 this.q = this.p;
             }
 
-            internal Color Scan()
+            internal Span<byte> Scan()
             {
-                Color color = default;
+                Span<byte> color = default;
                 var offset = ((int)q.y) * texture.w * 4 + ((int)q.x) * 4;
                 if (offset < 0 || offset >= texture.bits.Length)
                     color = faultColor;
                 else
-                    color = Color.FromArgb(BitConverter.ToInt32(texture.bits, offset));
+                    color = texture.bits.AsSpan(offset, 4);
                 q = (q.x + dq.x, q.y + dq.y);
                 return color;
             }
         }
 
-        internal TextureTriangle UpperTriangle(Angle angle, Trigonometry tri, Color faultColor)
+        internal TextureTriangle UpperTriangle(Angle angle, Trigonometry tri)
         {
             var i = new TextureTriangle
             {
@@ -71,12 +71,10 @@ namespace ImageManipulation
             // reset pointer
             i.q = i.p;
 
-            i.faultColor = faultColor;
-
             return i;
         }
 
-        internal TextureTriangle LowerTriangle(Angle angle, Trigonometry tri, Color faultColor)
+        internal TextureTriangle LowerTriangle(Angle angle, Trigonometry tri)
         {
             var i = new TextureTriangle
             {
@@ -107,8 +105,6 @@ namespace ImageManipulation
 
             // reset pointer
             i.q = i.p;
-
-            i.faultColor = faultColor;
 
             return i;
         }

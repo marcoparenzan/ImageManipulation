@@ -13,13 +13,13 @@ namespace ImageManipulation
             var tri = Trigonometry.FromDeg(angle.deg_q);
 
             var swap = angle.deg >= 90 && angle.deg < 180 || angle.deg >= 270 && angle.deg < 360;
-            var w = swap ? texture.h : texture.w;
-            var h = swap ? texture.w : texture.h;
+            var tw = swap ? texture.h : texture.w;
+            var th = swap ? texture.w : texture.h;
 
-            var w_c = w * tri.cos;
-            var w_s = w * tri.sin;
-            var h_c = h * tri.cos;
-            var h_s = h * tri.sin;
+            var w_c = tw * tri.cos;
+            var w_s = tw * tri.sin;
+            var h_c = th * tri.cos;
+            var h_s = th * tri.sin;
 
             var v = new (double x, double y)[] { (0, w_s), (w_c, 0), (w_c + h_s, h_c), (h_s, w_s + h_c) };
 
@@ -40,7 +40,7 @@ namespace ImageManipulation
             var yr = vr.y;
 
             // texture
-            var iterator = texture.UpperTriangle(angle, tri, Color.Blue);
+            var triangle = texture.UpperTriangle(angle, tri);
 
             // prepare loop
             var y = vt.y;
@@ -60,7 +60,7 @@ namespace ImageManipulation
                     yl = vb.y;
                     dxl = tri.tan;
                     xl = 0;
-                    iterator = texture.LowerTriangle(angle, tri, Color.Green); // change slope in texture
+                    triangle = texture.LowerTriangle(angle, tri); // change slope in texture
                 }
                 else if (y >= yr) // evaluate if xr check is needed
                 {
@@ -68,12 +68,14 @@ namespace ImageManipulation
                     dxr = -tri.ctg;
                 }
                 var x = xl;
+                var offset = ((int)(y + cy)) * this.w * 4 + ((int)(x + cx)) * 4;
                 while (x < xr)
                 {
-                    SetPixel((int)(x + cx), (int)(y + cy), iterator.Scan());  // texture.Scan()
+                    SetPixel(offset, triangle.Scan());
+                    offset += 4;
                     x++; // horizontal on screen
                 }
-                iterator.Next();
+                triangle.NextScanLine();
                 xl += dxl;
                 xr += dxr;
                 y++;

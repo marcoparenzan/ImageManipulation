@@ -18,13 +18,13 @@ namespace ImageManipulation
             var source = (Bitmap)Bitmap.FromFile("image.png");
             var texture = Texture.FromBitmap(source);
 
-            var target = (Bitmap)new Bitmap(1024, 768);
-            var buffer = ScreenBuffer.FromBitmap(target);
+            var backBufferBitmap = (Bitmap)new Bitmap(1024, 768);
+            var backBuffer = ScreenBuffer.FromBitmap(backBufferBitmap);
             var angle = (Angle) 0;
 
             var form = new DoubleBufferForm((2,2));
             form.StartPosition = FormStartPosition.CenterScreen;
-            form.FormBorderStyle = FormBorderStyle.None;
+            //form.FormBorderStyle = FormBorderStyle.None;
             form.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Escape)
@@ -38,7 +38,7 @@ namespace ImageManipulation
 
             // render
 
-            var refrate = 5;
+            var refrate = 50;
 
             var timer = new System.Windows.Forms.Timer();
             timer.Interval = (int)Math.Round(1000.0 / refrate, 0);
@@ -48,24 +48,25 @@ namespace ImageManipulation
 
                 // prepare buffer
 
-                buffer.Begin(Color.White);
+                backBuffer.Begin(Color.White);
 
-                buffer.DrawImage(texture, angle, (512, 384));
+                backBuffer.DrawImage(texture, angle, (512, 384));
 
-                buffer.End();
+                backBuffer.End();
 
-                form.CurrentGraphics.DrawImage(target, 0, 0);
+                form.CurrentGraphics.DrawImage(backBufferBitmap, 0, 0);
                 form.Invalidate();
 
                 // do something
 
-                angle.RotateBy(5);
-
+                angle.RotateBy(1);
 
                 // complete
 
                 var stop = DateTime.Now;
                 var frameRate = (int)Math.Round(1000.0 / (stop - start).TotalMilliseconds, 0);
+
+                form.Text = $"Framerate={frameRate}";
             };
             timer.Start();
 
