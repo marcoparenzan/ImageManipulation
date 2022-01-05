@@ -40,7 +40,7 @@ namespace ImageManipulation
             var yr = vr.y;
 
             // texture
-            var iterator = texture.Q0(angle, tri, Color.Blue);
+            var iterator = texture.UpperTriangle(angle, tri, Color.Blue);
 
             // prepare loop
             var y = vt.y;
@@ -60,7 +60,7 @@ namespace ImageManipulation
                     yl = vb.y;
                     dxl = tri.tan;
                     xl = 0;
-                    iterator = texture.Q1(angle, tri, Color.Green); // change slope in texture
+                    iterator = texture.LowerTriangle(angle, tri, Color.Green); // change slope in texture
                 }
                 else if (y >= yr) // evaluate if xr check is needed
                 {

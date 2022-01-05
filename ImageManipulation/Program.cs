@@ -38,7 +38,7 @@ namespace ImageManipulation
 
             // render
 
-            var refrate = 10;
+            var refrate = 5;
 
             var timer = new System.Windows.Forms.Timer();
             timer.Interval = (int)Math.Round(1000.0 / refrate, 0);

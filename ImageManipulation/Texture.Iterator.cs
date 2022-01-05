@@ -9,7 +9,7 @@ namespace ImageManipulation
 {
     public partial class Texture
     {
-        internal struct TextureIterator
+        internal struct TextureTriangle
         {
             internal Texture texture;
 
@@ -39,9 +39,9 @@ namespace ImageManipulation
             }
         }
 
-        internal TextureIterator Q0(Angle angle, Trigonometry tri, Color faultColor)
+        internal TextureTriangle UpperTriangle(Angle angle, Trigonometry tri, Color faultColor)
         {
-            var i = new TextureIterator
+            var i = new TextureTriangle
             {
                 texture = this
             };
@@ -76,9 +76,9 @@ namespace ImageManipulation
             return i;
         }
 
-        internal TextureIterator Q1(Angle angle, Trigonometry tri, Color faultColor)
+        internal TextureTriangle LowerTriangle(Angle angle, Trigonometry tri, Color faultColor)
         {
-            var i = new TextureIterator
+            var i = new TextureTriangle
             {
                 texture = this
             };
